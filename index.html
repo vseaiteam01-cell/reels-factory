@@ -1,0 +1,1674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reels Factory: ten reels from one clip</title>
+<meta name="description" content="Drop in one clip, get ten finished vertical reels. Effects, rules, agents and commands wired into a single workspace for Claude Code.">
+<!-- Карточка ссылки. При выкладке на домен пути в og:image и twitter:image
+     заменяются на абсолютные: соцсети относительных не понимают. -->
+<meta property="og:type" content="product">
+<meta property="og:title" content="Reels Factory: ten reels from one clip">
+<meta property="og:description" content="A workspace for Claude Code, not a plugin. Ten reel types, 126 effects, ten caption designs, nine checks on every render.">
+<meta property="og:image" content="https://vseaiteam01-cell.github.io/reels-factory/media/cover.jpg">
+<meta property="og:url" content="https://vseaiteam01-cell.github.io/reels-factory/">
+<link rel="canonical" href="https://vseaiteam01-cell.github.io/reels-factory/">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reels Factory cover: one clip in, ten reels out, with three rendered reels">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://vseaiteam01-cell.github.io/reels-factory/media/cover.jpg">
+<style>
+/* Шрифты лежат рядом: страница должна собираться и открываться без интернета,
+   а в день, когда чужая ссылка перестанет отвечать, подписи остаются на месте. */
+@font-face{font-family:Anton;src:url(fonts/anton.woff2) format("woff2");
+  font-weight:400;font-style:normal;font-display:swap}
+/* В Anton кириллицы нет вовсе. Под те же правила подставляется Manrope
+   ExtraBold: браузер выбирает начертание по диапазону символов, поэтому
+   латинские заголовки остаются Anton'ом, а русские перестают падать
+   в системный шрифт. */
+@font-face{font-family:Anton;src:url(fonts/manrope-cyrillic-800.woff2) format("woff2");
+  font-weight:400;font-style:normal;font-display:swap;
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Manrope;src:url(fonts/manrope-latin-500.woff2) format("woff2");
+  font-weight:500;font-style:normal;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+2000-206F,U+2122,U+2191,U+2193,U+2212}
+@font-face{font-family:Manrope;src:url(fonts/manrope-cyrillic-500.woff2) format("woff2");
+  font-weight:500;font-style:normal;font-display:swap;
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Manrope;src:url(fonts/manrope-latin-700.woff2) format("woff2");
+  font-weight:700;font-style:normal;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+2000-206F,U+2122,U+2191,U+2193,U+2212}
+@font-face{font-family:Manrope;src:url(fonts/manrope-cyrillic-700.woff2) format("woff2");
+  font-weight:700;font-style:normal;font-display:swap;
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+</style>
+<style>
+:root{
+  --c-void:#07060D; --c-panel:#0E0C18; --c-tile:#141026;
+  --c-glass:rgba(237,233,255,.07); --c-hairline:rgba(237,233,255,.12);
+  --c-text:#EDE9FF; --c-muted:rgba(237,233,255,.72); --c-meta:rgba(237,233,255,.52);
+  --c-lime:#B6FF3C; --c-violet:#7B3BFF;
+  --r-panel:16px; --r-card:12px; --r-button:8px;
+  --page:1440px; --gutter:64px; --gap-sec:128px; --pad-panel:24px;
+  --ease:cubic-bezier(0,0,.2,1); --dur:.2s;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--c-void);color:var(--c-text);
+  font-family:Manrope,system-ui,sans-serif;font-weight:500;font-size:18px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+img,video{display:block;max-width:100%}
+a{color:var(--c-lime);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px;
+  text-decoration-thickness:from-font}
+:focus-visible{outline:2px solid var(--c-lime);outline-offset:3px;border-radius:4px}
+::selection{background:var(--c-lime);color:#07060D}
+
+/* Свет живёт отдельным слоем под содержимым: два пятна плывут сами и
+   немного тянутся за прокруткой. Это даёт странице глубину, но не трогает
+   ни одного блока — значит ничего не дёргается при пересчёте вёрстки. */
+.aura{position:fixed;inset:-20vh -10vw;z-index:-1;pointer-events:none;
+  opacity:.85;
+  background:
+    radial-gradient(38vw 38vw at calc(18% + var(--px,0px)) calc(12% + var(--py,0px)),
+      rgba(123,59,255,.26),transparent 68%),
+    radial-gradient(34vw 34vw at calc(84% - var(--px,0px)) calc(62% + var(--py,0px)),
+      rgba(182,255,60,.10),transparent 66%);
+  animation:aura 26s ease-in-out infinite alternate}
+@keyframes aura{to{transform:translate3d(0,-3vh,0) scale(1.08)}}
+@media (prefers-reduced-motion:reduce){ .aura{animation:none} }
+
+.wrap{max-width:var(--page);margin:0 auto;padding:0 var(--gutter)}
+.display,.sec-title,.panel-title{font-family:Anton,Oswald,Impact,system-ui,sans-serif;
+  font-weight:400;margin:0;text-transform:uppercase;text-wrap:balance}
+.display{font-size:88px;line-height:.86;letter-spacing:-2.6px}
+.sec-title{font-size:46px;line-height:.94;letter-spacing:-1.3px}
+.panel-title{font-size:26px;line-height:1.08;letter-spacing:-.5px}
+.lead{font-size:22px;line-height:1.5;color:var(--c-muted);max-width:36ch;text-wrap:pretty}
+p{color:var(--c-muted);max-width:66ch;text-wrap:pretty}
+.meta{font-size:12px;line-height:1.5;letter-spacing:.3px;color:var(--c-meta);
+  font-variant-numeric:tabular-nums}
+
+header{position:sticky;top:0;z-index:20;background:rgba(7,6,13,.84);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--c-hairline)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.brand{font-family:Anton,Oswald,Impact,sans-serif;font-size:22px;letter-spacing:-.4px;
+  color:var(--c-text)}
+nav{display:flex;gap:24px}
+nav a{color:var(--c-muted);font-size:14px;white-space:nowrap;
+  transition:color var(--dur) var(--ease)}
+nav a:hover{color:var(--c-text);text-decoration:none}
+
+.btn{display:inline-block;background:var(--c-lime);color:#07060D;font-weight:700;
+  font-size:16px;line-height:1;padding:16px 28px;border:0;border-radius:var(--r-button);
+  cursor:pointer;white-space:nowrap;
+  transition:filter var(--dur) var(--ease),transform 60ms var(--ease)}
+.btn:hover{filter:brightness(1.08);text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn.magnet{transform:translate(var(--dx,0),var(--dy,0));
+  transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.btn.magnet:active{transform:translate(var(--dx,0),var(--dy,0)) scale(.98)}
+.btn-ghost{background:transparent;color:var(--c-text);
+  box-shadow:inset 0 0 0 1px var(--c-hairline)}
+.btn-ghost:hover{filter:none;background:var(--c-glass)}
+
+.hero{padding:72px 0 0;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-30% -10% auto -10%;height:560px;
+  background:radial-gradient(58% 58% at 50% 0,rgba(123,59,255,.32),transparent 70%);
+  pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr .95fr;
+  gap:48px;align-items:center}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+
+.figures{border-top:1px solid var(--c-hairline);border-bottom:1px solid var(--c-hairline);
+  margin-top:72px;padding:28px 0}
+.figures .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.figures .wrap>*{min-width:0}
+.fig b{display:block;font-family:Anton,Oswald,sans-serif;font-size:40px;line-height:1;
+  color:var(--c-text);font-variant-numeric:tabular-nums}
+.fig span{font-size:13px;color:var(--c-meta)}
+
+section{padding:var(--gap-sec) 0 0}
+.sec-head{margin-bottom:36px;max-width:72ch}
+.sec-title{overflow:hidden}
+.sec-title span{display:inline-block;transform:translateY(102%);
+  transition:transform .7s cubic-bezier(.16,1,.3,1)}
+.sec-title.seen span{transform:none}
+@media (prefers-reduced-motion:reduce){ .sec-title span{transform:none} }
+.sec-head p{margin:12px 0 0}
+
+.panel{position:relative;background:var(--c-panel);border-radius:var(--r-panel);
+  box-shadow:0 0 0 1px var(--c-hairline);overflow:hidden}
+.panel video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;
+  transform:translate3d(0,var(--par,0px),0);will-change:transform}
+.panel .cap{position:absolute;left:0;right:0;bottom:0;padding:var(--pad-panel);
+  /* Доски семейств светлые, и на них белая подпись пропадала. Подложка
+     плотнее у низа и тянется выше, а тень отделяет буквы от светлого фона. */
+  background:linear-gradient(to top,rgba(7,6,13,.94),rgba(7,6,13,.86) 46%,
+    rgba(7,6,13,.46) 78%,transparent);
+  text-shadow:0 1px 3px rgba(0,0,0,.75);pointer-events:none}
+.panel .cap p{margin:6px 0 0;font-size:14px;color:var(--c-muted);max-width:54ch}
+/* Доска семейства — лента в шесть кадров: её высота идёт по ряду плиток,
+   поэтому рамка повторяет её соотношение, а не общие 16:9, иначе снизу
+   оставалась тёмная полоса. */
+.panel.fam video{aspect-ratio:8/3}
+
+/* Доски выдачи: внутри кадра уже есть свои подписи, и накрывать их
+   градиентом нельзя. У таких панелей подпись стоит под кадром. */
+.panel.still img,.panel.still video{display:block;width:100%;height:auto}
+.panel.still .cap{position:static;background:none;text-shadow:none;
+  padding:18px var(--pad-panel) 22px}
+.panel.still .cap p{max-width:62ch}
+
+.showcase{display:grid;gap:20px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.row2>*{min-width:0}
+
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.bento>*{min-width:0}
+.cell{background:var(--c-panel);border-radius:var(--r-card);
+  box-shadow:0 0 0 1px var(--c-hairline);padding:24px;grid-column:span 2}
+.cell.wide{grid-column:span 3}
+.cell.full{grid-column:span 6;background:
+  linear-gradient(120deg,rgba(123,59,255,.22),transparent 58%),var(--c-panel)}
+.cell b{display:block;font-family:Anton,Oswald,sans-serif;font-size:34px;line-height:1;
+  color:var(--c-lime);font-variant-numeric:tabular-nums}
+.cell h3{margin:8px 0 6px;font-size:18px;font-weight:700}
+.cell p{margin:0;font-size:15px;line-height:1.55}
+
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.steps>*{min-width:0}
+.step{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:start;
+  padding:18px 20px;border-radius:var(--r-card);box-shadow:0 0 0 1px var(--c-hairline)}
+.step b{font-family:Anton,Oswald,sans-serif;font-size:24px;color:var(--c-lime);
+  font-variant-numeric:tabular-nums;line-height:1.1}
+.step h3{margin:0 0 3px;font-size:17px;font-weight:700}
+.step p{margin:0;font-size:15px;line-height:1.5}
+
+.switch{display:inline-flex;background:var(--c-glass);border-radius:9999px;padding:4px;
+  box-shadow:0 0 0 1px var(--c-hairline);margin-bottom:24px}
+.switch button{border:0;background:transparent;color:var(--c-muted);
+  font-family:Manrope,sans-serif;font-weight:700;font-size:14px;padding:10px 20px;
+  border-radius:9999px;cursor:pointer;
+  transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+.switch button[aria-selected="true"]{background:var(--c-lime);color:#07060D}
+table{width:100%;border-collapse:collapse;font-size:15px}
+caption{text-align:left;color:var(--c-meta);font-size:13px;padding-bottom:12px}
+th,td{text-align:left;padding:14px 16px;vertical-align:top;color:var(--c-muted)}
+tbody tr+tr{border-top:1px solid var(--c-hairline)}
+th{color:var(--c-text);font-weight:700;font-size:13px;letter-spacing:.3px;
+  text-transform:uppercase}
+td:first-child{color:var(--c-text);font-weight:700}
+
+.plan .now{font-family:Anton,Oswald,sans-serif;font-size:68px;line-height:1;
+  letter-spacing:-2px;margin:6px 0 20px;font-variant-numeric:tabular-nums}
+
+.plans{display:grid;grid-template-columns:1fr 1.25fr;gap:20px;align-items:start}
+.plan{background:var(--c-panel);border-radius:var(--r-panel);
+  box-shadow:0 0 0 1px var(--c-hairline);padding:32px}
+.plan-main{box-shadow:0 0 0 1px rgba(182,255,60,.42)}
+.plan p{font-size:15px;margin:0 0 16px}
+.plan ul{margin:0 0 24px;padding-left:20px;color:var(--c-muted);font-size:15px;
+  line-height:1.7}
+.plan .now s{opacity:.42;font-size:.5em}
+
+/* Кнопка покупки в блоке цены: крупнее обычной, с запиской под ней. */
+.plan .btn.buy{display:inline-block;font-size:17px;padding:15px 26px}
+.buy-note{font-size:14px;line-height:1.6;color:var(--c-muted);text-wrap:pretty}
+
+.promise{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px}
+.promise div{background:var(--c-panel);border-radius:var(--r-card);
+  box-shadow:0 0 0 1px var(--c-hairline);padding:24px}
+.promise b{display:block;font-family:Anton,Oswald,sans-serif;font-size:26px;line-height:1;
+  color:var(--c-lime);margin-bottom:10px}
+.promise span{font-size:15px;line-height:1.6;color:var(--c-muted)}
+
+.faq{margin-top:20px;background:var(--c-panel);border-radius:var(--r-panel);
+  box-shadow:0 0 0 1px var(--c-hairline);padding:32px}
+.faq details{border-top:1px solid var(--c-hairline);padding:16px 0}
+.faq details:first-of-type{border-top:0}
+.faq summary{cursor:pointer;font-weight:700;font-size:17px;color:var(--c-text);
+  list-style:none;display:flex;justify-content:space-between;gap:16px;
+  padding:4px 0;min-height:32px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--c-lime);font-size:22px;line-height:1}
+.faq details[open] summary::after{content:"\2212"}
+.faq p{margin:10px 0 2px;font-size:15px}
+
+/* Живая коробка: настоящий объём на гранях, а не рисунок куба.
+   Поворот держится на CSS-переменных, их двигает указатель; без скрипта
+   коробка просто стоит в развороте по умолчанию. */
+/* Мини-коробки бесплатных наборов: тот же предмет, что и большой, только
+   без рендера — на двух карточках три грани на CSS отрабатывают честнее,
+   чем вторая сцена three.js на той же странице. */
+.ministage{perspective:1100px;perspective-origin:50% 44%;display:flex;
+  align-items:center;justify-content:center;padding:26px 0 18px;min-height:330px}
+.minicube{position:relative;width:224px;height:280px;transform-style:preserve-3d;
+  transform:rotateX(-8deg) rotateY(-24deg);
+  transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.panel:hover .minicube{transform:rotateX(-6deg) rotateY(-12deg)}
+.minicube .f{position:absolute;left:50%;top:50%;background-size:cover;
+  background-position:center;background-color:var(--c-tile);
+  box-shadow:0 0 0 1px rgba(237,233,255,.07)}
+.minicube .f.fr{width:224px;height:280px;transform:translate(-50%,-50%) translateZ(42px)}
+.minicube .f.rt{width:84px;height:280px;
+  transform:translate(-50%,-50%) rotateY(90deg) translateZ(112px)}
+.minicube .f.tp{width:224px;height:84px;
+  transform:translate(-50%,-50%) rotateX(90deg) translateZ(140px)}
+.minicube .f.fr::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(118deg,rgba(255,255,255,.12),transparent 56%)}
+.minicube .sh{position:absolute;left:50%;top:100%;width:270px;height:40px;
+  transform:translate(-50%,2px) rotateX(86deg);
+  background:radial-gradient(50% 50% at 50% 50%,rgba(0,0,0,.72),transparent 72%);
+  filter:blur(12px)}
+.runbox{padding:0 var(--pad-panel) var(--pad-panel)}
+.runbox summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--c-lime);
+  list-style:none;padding:8px 0}
+.runbox summary::-webkit-details-marker{display:none}
+.runbox video{margin-top:10px;border-radius:var(--r-card);aspect-ratio:9/16;
+  max-height:420px;width:auto}
+.selfsetup{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;margin:0 0 28px}
+.selfsetup>div{background:var(--c-panel);border-radius:var(--r-card);
+  box-shadow:0 0 0 1px var(--c-hairline);padding:20px 22px}
+.selfsetup b{display:block;font-family:Anton,Oswald,sans-serif;font-size:20px;
+  line-height:1;color:var(--c-lime);margin-bottom:8px;text-transform:uppercase}
+.selfsetup span{font-size:15px;line-height:1.55;color:var(--c-muted)}
+@media (prefers-reduced-motion:reduce){ .minicube{transition:none} }
+
+.stage{position:relative;perspective:1500px;perspective-origin:50% 44%;display:flex;
+  align-items:center;justify-content:center;padding:18px 0 34px;
+  min-height:520px;touch-action:pan-y}
+.stage::before{content:"";position:absolute;inset:6% 4% 14%;pointer-events:none;
+  background:radial-gradient(52% 46% at 50% 44%,rgba(123,59,255,.30),transparent 72%)}
+.stage .gl{position:absolute;inset:0;opacity:0;transition:opacity .5s var(--ease)}
+.stage.gl-on .gl{opacity:1}
+.stage.gl-on .float{display:none}
+.stage .hint{position:absolute;left:0;right:0;bottom:4px;text-align:center;
+  font-size:12px;letter-spacing:.3px;color:var(--c-meta);pointer-events:none}
+.float{animation:boxfloat 7s ease-in-out infinite}
+.cube{position:relative;width:310px;height:425px;transform-style:preserve-3d;
+  transform:rotateX(var(--rx,-9deg)) rotateY(var(--ry,-27deg));
+  transition:transform .35s cubic-bezier(.2,.7,.2,1);will-change:transform}
+.cube.live{transition:transform .08s linear}
+.face{position:absolute;left:50%;top:50%;background-size:cover;
+  background-position:center;background-color:var(--c-tile);
+  box-shadow:0 0 0 1px rgba(237,233,255,.07)}
+.face.front{width:310px;height:425px;
+  transform:translate(-50%,-50%) translateZ(65px)}
+.face.right{width:130px;height:425px;
+  transform:translate(-50%,-50%) rotateY(90deg) translateZ(155px)}
+.face.top{width:310px;height:130px;
+  transform:translate(-50%,-50%) rotateX(90deg) translateZ(212.5px)}
+/* Блик по лицевой грани: он и выдаёт, что предмет стоит под светом. */
+.face.front::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(118deg,rgba(255,255,255,.14),
+    rgba(255,255,255,.03) 34%,transparent 58%)}
+/* Тень запасного куба лежала под 86 градусами и почти вставала на ребро:
+   на тёмном фоне она читалась плитой, а не тенью. Теперь она прижата к
+   основанию, бледнее и шире размыта. */
+.cube .shade{position:absolute;left:50%;top:100%;width:300px;height:40px;
+  transform:translate(-50%,-2px) rotateX(74deg);
+  background:radial-gradient(50% 50% at 50% 50%,rgba(0,0,0,.42),transparent 70%);
+  filter:blur(30px)}
+@keyframes boxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@media (prefers-reduced-motion:reduce){
+  .float{animation:none}
+  .cube{transition:none}
+}
+/* На телефоне курсора нет, и звать его водить незачем. */
+@media (hover:none){ .stage .hint{display:none} }
+
+.boxshot{display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:center;
+  background:var(--c-panel);border-radius:var(--r-panel);
+  box-shadow:0 0 0 1px var(--c-hairline);padding:32px;margin-bottom:20px}
+.boxshot>*{min-width:0}
+.boxshot img{width:100%;height:auto;border-radius:var(--r-card)}
+.boxshot ul{margin:14px 0 0;padding-left:20px;color:var(--c-muted);font-size:15px;
+  line-height:1.7}
+.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.parts>*{min-width:0}
+.part{position:relative;overflow:hidden;background:var(--c-panel);
+  border-radius:var(--r-card);box-shadow:0 0 0 1px var(--c-hairline);
+  padding:22px 22px 24px;opacity:0;transform:translateY(14px);
+  transition:opacity .5s var(--ease),transform .5s var(--ease),
+    box-shadow var(--dur) var(--ease)}
+.part.seen{opacity:1;transform:none}
+.part::before{content:"";position:absolute;inset:-1px;opacity:0;pointer-events:none;
+  background:radial-gradient(220px 220px at var(--x,50%) var(--y,0),
+    rgba(182,255,60,.14),transparent 70%);
+  transition:opacity var(--dur) var(--ease)}
+.part:hover::before{opacity:1}
+.part:hover{box-shadow:0 0 0 1px rgba(182,255,60,.34)}
+.part b{display:block;font-family:Anton,Oswald,sans-serif;font-size:24px;line-height:1;
+  color:var(--c-lime);font-variant-numeric:tabular-nums;margin-bottom:12px}
+.part h3{margin:0 0 8px;font-size:18px;line-height:1.2}
+.part p{margin:0;font-size:14px;line-height:1.55}
+
+/* Полоса покупки: цена не должна лежать на дне страницы. Приезжает, когда
+   первый экран ушёл, и прячется над самим блоком цены, чтобы не спорить с ним. */
+.buybar{position:fixed;left:0;right:0;bottom:0;z-index:25;
+  transform:translateY(110%);transition:transform .35s var(--ease);
+  background:rgba(14,12,24,.92);backdrop-filter:blur(14px);
+  border-top:1px solid var(--c-hairline)}
+.buybar.on{transform:none}
+.buybar .wrap{display:flex;align-items:center;gap:18px;padding:12px var(--gutter);
+  justify-content:space-between}
+.buybar b{font-family:Anton,Oswald,sans-serif;font-size:26px;line-height:1;
+  font-variant-numeric:tabular-nums}
+.buybar s{opacity:.42;font-size:.6em;margin-left:6px}
+.buybar span{font-size:13px;color:var(--c-meta)}
+.buybar .right{display:flex;align-items:center;gap:12px}
+.buybar .btn{padding:12px 22px;font-size:15px}
+@media (max-width:760px){
+  .buybar .wrap{padding:10px 16px;gap:10px}
+  .buybar .hideable{display:none}
+  .buybar b{font-size:22px}
+}
+@media (prefers-reduced-motion:reduce){ .buybar{transition:none} }
+
+footer{margin-top:var(--gap-sec);padding:32px 0 48px;border-top:1px solid var(--c-hairline)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:1100px){
+  .hero .wrap{grid-template-columns:1fr}
+  .display{font-size:62px;letter-spacing:-1.8px}
+  .bento{grid-template-columns:repeat(4,1fr)}
+  .cell,.cell.wide{grid-column:span 2}
+  .cell.full{grid-column:span 4}
+  .figures .wrap{grid-template-columns:repeat(2,1fr)}
+  .plans{grid-template-columns:1fr}
+  .promise{grid-template-columns:1fr}
+  .selfsetup{grid-template-columns:1fr}
+  .boxshot{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  :root{--gutter:16px;--gap-sec:80px}
+  body{font-size:17px}
+  /* На телефоне подпись поверх ролика съедала его целиком: четыре строки
+     текста на кадре высотой в двести точек, и ни прочитать, ни посмотреть.
+     Здесь подпись встаёт под видео обычным потоком. */
+  .panel .cap{position:static;background:none;padding:14px var(--pad-panel) 18px}
+  .panel .cap p{max-width:none}
+  .display{font-size:42px;letter-spacing:-1.2px}
+  .sec-title{font-size:31px;letter-spacing:-.9px}
+  .panel-title{font-size:21px}
+  .lead{font-size:19px}
+  nav{display:none}
+  .row2,.steps{grid-template-columns:1fr}
+  .bento{grid-template-columns:repeat(2,1fr)}
+  .cell,.cell.wide,.cell.full{grid-column:span 2}
+  .boxshot{padding:20px;gap:24px}
+  .stage{min-height:420px;padding:8px 0 26px}
+  .cube{width:236px;height:324px}
+  .face.front{width:236px;height:324px;transform:translate(-50%,-50%) translateZ(50px)}
+  .face.right{width:100px;height:324px;transform:translate(-50%,-50%) rotateY(90deg) translateZ(118px)}
+  .face.top{width:236px;height:100px;transform:translate(-50%,-50%) rotateX(90deg) translateZ(162px)}
+  .cube .shade{width:232px}
+  .plan,.faq{padding:24px}
+  .parts{grid-template-columns:1fr}
+  .plan .now{font-size:48px}
+}
+/* ---------- слой жизни ---------- */
+
+/* полоса прокрутки сверху: чистый CSS, без слушателей */
+.progress{position:fixed;top:0;left:0;height:2px;width:100%;z-index:30;
+  background:linear-gradient(90deg,var(--c-violet),var(--c-lime));
+  transform:scaleX(0);transform-origin:0 50%;
+  animation:bar linear both;animation-timeline:scroll(root block)}
+@keyframes bar{to{transform:scaleX(1)}}
+
+/* зерно: материал вместо плоской заливки */
+.grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* заголовок въезжает строка за строкой */
+.display .ln{display:block;overflow:hidden;padding-bottom:.04em}
+.display .ln i{display:block;font-style:normal;transform:translateY(104%);
+  animation:lineup .9s cubic-bezier(.19,1,.22,1) forwards}
+.display .ln:nth-child(2) i{animation-delay:.1s}
+@keyframes lineup{to{transform:none}}
+
+/* кнопка: блик идёт от курсора */
+.btn{position:relative;overflow:hidden;isolation:isolate}
+.btn::after{content:"";position:absolute;inset:0;z-index:-1;opacity:0;
+  background:radial-gradient(120px 120px at var(--mx,50%) var(--my,50%),
+    rgba(255,255,255,.5),transparent 60%);
+  transition:opacity .2s var(--ease)}
+.btn:hover::after{opacity:1}
+.btn-ghost::after{background:radial-gradient(160px 160px at var(--mx,50%) var(--my,50%),
+  rgba(182,255,60,.18),transparent 62%)}
+
+/* бегущая строка приёмов: ровно одна на странице */
+.ticker{overflow:hidden;border-bottom:1px solid var(--c-hairline);padding:14px 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.ticker .track{display:flex;gap:40px;width:max-content;
+  animation:slide 48s linear infinite}
+.ticker:hover .track{animation-play-state:paused}
+.ticker span{font-family:Anton,Oswald,sans-serif;font-size:20px;letter-spacing:-.3px;
+  text-transform:uppercase;color:var(--c-meta);white-space:nowrap}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* плитка приподнимается */
+.panel{transition:transform .3s cubic-bezier(.19,1,.22,1),box-shadow .2s var(--ease)}
+.panel:hover{transform:translateY(-3px)}
+
+/* ячейка слоя: подсветка идёт за курсором */
+.cell{position:relative;overflow:hidden}
+.cell::before{content:"";position:absolute;inset:0;opacity:0;pointer-events:none;
+  background:radial-gradient(220px 220px at var(--x,50%) var(--y,50%),
+    rgba(182,255,60,.10),transparent 65%);
+  transition:opacity .2s var(--ease)}
+.cell:hover::before{opacity:1}
+
+/* ступень: полоса слева растёт */
+.step{position:relative}
+.step::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:2px;
+  background:var(--c-lime);transform:scaleY(0);transform-origin:50% 0;border-radius:2px;
+  transition:transform .3s cubic-bezier(.19,1,.22,1)}
+.step:hover::before{transform:scaleY(1)}
+
+/* движение: экспо-аут 0.6s на появление блока (The Line Studio),
+   0.2s на отклик интерфейса (Interfere). Двигается содержимое, не хром. */
+.rise{opacity:0;transform:translateY(26px);
+  transition:opacity .6s cubic-bezier(.19,1,.22,1),transform .6s cubic-bezier(.19,1,.22,1)}
+.rise.seen{opacity:1;transform:none}
+.rise.d1{transition-delay:.06s}
+.rise.d2{transition-delay:.12s}
+.rise.d3{transition-delay:.18s}
+.panel,.cell,.step{transition:box-shadow .2s var(--ease)}
+.panel:hover,.cell:hover,.step:hover{box-shadow:0 0 0 1px rgba(237,233,255,.26)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rise{opacity:1;transform:none}
+  .display .ln i{transform:none}
+  .progress,.grain{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"></div>
+<div class="aura" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap">
+    <div class="brand">Reels Factory</div>
+    <nav>
+      <a href="#types">Ten types</a>
+      <a href="#titles">Titles</a>
+      <a href="#box">In the box</a>
+      <a href="#does">What it does</a>
+      <a href="#inside">What is inside</a>
+      <a href="#install">How it installs</a>
+      <a href="#paths">Two paths</a>
+      <a href="#free">Free</a>
+      <a href="#price">Price</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <span class="meta" style="display:block;margin-bottom:14px">Built on footage we made ourselves</span>
+      <h1 class="display"><span class="ln"><i>One clip in.</i></span><span class="ln"><i>Ten reels out.</i></span></h1>
+      <p class="lead">A workspace, not a plugin. Effects, rules, agents and commands wired
+        so the edit builds itself.</p>
+      <div class="cta">
+        <a class="btn" data-buy href="#price">Get the box, $79</a>
+        <a class="btn btn-ghost" href="#free">Start free</a>
+      </div>
+      <p class="meta" style="margin-top:14px;max-width:46ch">Launch price, down from $119.
+        Fourteen days, refund without questions. Two free sets work on their own, with no
+        payment and no account.</p>
+    </div>
+    <div class="panel">
+      <video preload="none" poster="media/posters/studio.jpg" data-src="media/studio.mp4" autoplay muted loop playsinline
+             aria-label="Six agent cursors working one timeline inside the editor screen"></video>
+      <div class="cap">
+        <h2 class="panel-title">Six cursors, one timeline</h2>
+        <p>The editor screen this page is promoted with, built from our own clips. The free
+          set below makes the same screen from yours.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="figures">
+  <div class="wrap">
+    <div class="fig rise"><b>126</b><span>effects in the library</span></div>
+    <div class="fig rise"><b>215</b><span>rules written from real mistakes</span></div>
+    <div class="fig rise"><b>17</b><span>gates that enforce them</span></div>
+    <div class="fig rise"><b>178</b><span>skills on the shelf</span></div>
+  </div>
+</div>
+
+<div class="ticker" aria-hidden="true">
+  <div class="track"><span>Punch zoom</span><span>Money rain</span><span>Shatter</span><span>Mosaic</span><span>Pixel dissolve</span><span>Slit scan</span><span>Echo trail</span><span>Text behind</span><span>Velocity cut</span><span>Flip 3D</span><span>Color pop</span><span>Bloom</span><span>Whip pan</span><span>Cube spin</span><span>Beat sync</span><span>Punch zoom</span><span>Money rain</span><span>Shatter</span><span>Mosaic</span><span>Pixel dissolve</span><span>Slit scan</span><span>Echo trail</span><span>Text behind</span><span>Velocity cut</span><span>Flip 3D</span><span>Color pop</span><span>Bloom</span><span>Whip pan</span><span>Cube spin</span><span>Beat sync</span></div>
+</div>
+
+<section id="types">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>Ten types from one clip</span></h2>
+      <p>One thirty second clip went in. These ten came out, built by the same command,
+        and all ten passed the gates. A type that does not have the material is refused
+        with a reason you can check in the report.</p>
+    </div>
+
+    <div class="panel rise">
+      <video preload="none" poster="media/posters/types.jpg" data-src="media/types.mp4" autoplay muted loop playsinline
+             aria-label="Ten reel types side by side: beat cut, talking head, head with effects, voiceover, breakdown, before and after, top five, reaction, editor screen, hook loop"></video>
+      <div class="cap">
+        <h3 class="panel-title">The run, not a mock-up</h3>
+        <p>Beat cut, talking head, head with effects, voiceover with word captions, a
+          breakdown, a before and after wipe, a countdown, a reaction, the editor screen,
+          and a hook loop. Ten files, one command, eighteen minutes. Each tile below is the
+          finished file, playing at its own speed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="titles">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>Titles, and what ships beside them</span></h2>
+      <p>The headline plate and the subtitles are not drawn with pixels. They are a layer of
+        HTML the browser renders over the cut, so the type is real type: proper fonts, glass,
+        shadows, a word lighting up under the voice. Ten designs come with the box, and the
+        whole batch changes design with one word in the scenario.</p>
+    </div>
+
+    <div class="panel still rise">
+      <video preload="none" poster="media/posters/captions.jpg" data-src="media/captions.mp4"
+             autoplay muted loop playsinline
+             aria-label="The same moment and the same words in ten caption designs: glass,
+                         news, kicker, bild, cleanbar, colorblock, pill, editorial, slam, neon"></video>
+      <div class="cap">
+        <h3 class="panel-title">Ten designs, one clip</h3>
+        <p>Same second of footage, same six words, ten looks. The plate carries the headline
+          for the whole reel; the subtitles follow the voice word by word, so the reel reads
+          with the sound off. Your own look is a theme in one stylesheet.</p>
+      </div>
+    </div>
+
+    <div class="showcase" style="margin-top:20px">
+      <div class="panel still rise">
+        <img src="media/delivery.jpg" loading="lazy" width="1280" height="720"
+             alt="One reel and the three files built with it: the vertical video, the cover,
+                  the same reel in 16:9 and the subtitle file">
+        <div class="cap">
+          <h3 class="panel-title">What lands beside the reel</h3>
+          <p>The vertical cut, a subtitle file platforms can read, a cover taken from a bright
+            sharp frame with the plate and no subtitles, and the same reel reframed to 16:9 or
+            1:1. One command, no second pass.</p>
+        </div>
+      </div>
+
+      <div class="panel still rise">
+        <img src="media/covers.jpg" loading="lazy" width="1280" height="720"
+             alt="Ten covers from one batch, each with its own headline plate">
+        <div class="cap">
+          <h3 class="panel-title">A cover for every reel</h3>
+          <p>Ten covers from the batch above. The frame is chosen by brightness, contrast and
+            sharpness, and the plate is rendered over it clean, so the thumbnail is not a
+            random still with a caption frozen mid-word.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="parts" style="margin-top:20px">
+      <div class="part"><b>01</b><h3>You see the moments</h3><p>The clip is read once and laid
+        out on sheets: four frames per moment, what is said inside it, and why it is strong,
+        a cut of the plan, a hit of sound, a face, a pause before the landing.</p></div>
+      <div class="part"><b>02</b><h3>You pick them</h3><p>Ten moments become a scenario file:
+        a headline, a line of voice and a format per reel. No moment, no reel. Nothing is
+        invented about the footage.</p></div>
+      <div class="part"><b>03</b><h3>The text is checked</h3><p>A linter reads the scenario
+        before the build and refuses dead headlines, empty praise and a line that only
+        retells the plate. The rules are one page, written out.</p></div>
+      <div class="part"><b>04</b><h3>Music ducks under the voice</h3><p>One line in the
+        scenario lays a bed under the batch. The track steps back where the voice speaks and
+        comes back where it stops.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="box">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>In the box</span></h2>
+      <p>Sixteen parts in one folder. Each works on its own, and the ones next to it check
+        its work.</p>
+    </div>
+
+    <div class="boxshot rise">
+      <div class="stage" id="stage"
+           aria-label="The Reels Factory box: ten reel types, 126 effects, ten caption designs, nine file checks"
+           role="img">
+        <div class="float">
+          <div class="cube" id="cube">
+            <div class="face front" style="background-image:url(media/box-face.jpg)"></div>
+            <div class="face right" style="background-image:url(media/box-side.jpg)"></div>
+            <div class="face top" style="background-image:url(media/box-top.jpg)"></div>
+            <div class="shade" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="gl" id="gl" aria-hidden="true"></div>
+        <span class="hint" aria-hidden="true">Move the cursor over the box to turn it</span>
+      </div>
+      <div>
+        <h3 class="panel-title">What arrives</h3>
+        <p>One folder you drop next to your project. The pipeline runs offline on your own
+          machine: Python, ffmpeg and Claude Code, no account and no key. A key is needed only
+          if you take the paid path for voice and lip sync, and the free path covers both.</p>
+        <ul>
+          <li>the pipeline, the effects library and the generators behind all 126 tiles</li>
+          <li>the title layer with ten designs, subtitles, covers and the 16:9 and 1:1 cuts</li>
+          <li>templates: project rules, four Claude Code gates, five agents, three commands, memory</li>
+          <li>a twelve step course, seven recipes and a sandbox for your own technique</li>
+        </ul>
+        <div class="cta" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px">
+          <a class="btn" href="#price">See the price</a>
+          <a class="btn btn-ghost" href="#free">Try the free sets</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="parts">
+      <div class="part"><b>01</b><h3>The pipeline</h3><p>Four steps, one command: read, plan, build, accept.</p></div>
+      <div class="part"><b>02</b><h3>Ten types</h3><p>Beat cut, talking head, voiceover, breakdown, hook loop and five more.</p></div>
+      <div class="part"><b>03</b><h3>126 effects</h3><p>Twenty families. Every tile on this page is a real render.</p></div>
+      <div class="part"><b>04</b><h3>Nine file checks</h3><p>Length, loudness, black frames, freeze, decode, quality, seams, repeats, titles on screen. They read the finished file, not the plan.</p></div>
+      <div class="part"><b>05</b><h3>Project rules</h3><p>Eight rules you drop into your own CLAUDE.md.</p></div>
+      <div class="part"><b>06</b><h3>Five agents</h3><p>Planner, writer, visual, analyst, reviewer. Five roles ship as templates; our own studio has grown to ten on top of these.</p></div>
+      <div class="part"><b>07</b><h3>Three commands</h3><p>Build, review, check, wired to the pipeline.</p></div>
+      <div class="part"><b>08</b><h3>Memory</h3><p>An index, two worked examples and the rule for writing more.</p></div>
+      <div class="part"><b>09</b><h3>The course</h3><p>Twelve steps from an empty machine to the first reel.</p></div>
+      <div class="part"><b>10</b><h3>Seven recipes</h3><p>Ready chains: to the beat, house voice, talking head, quiet cut, ten by scenario.</p></div>
+      <div class="part"><b>11</b><h3>The sandbox</h3><p>Describe an effect, get a checked stub and a contact sheet.</p></div>
+      <div class="part"><b>12</b><h3>Voice, 54 of them</h3><p>Speech on your own machine, no key and no subscription. A turning head for the talking types. No lip sync and no presenter avatar: that needs a paid service and is not in here.</p></div>
+      <div class="part"><b>13</b><h3>Storyboard</h3><p>The clip on sheets: four frames per moment, what is said in it, and what makes it strong.</p></div>
+      <div class="part"><b>14</b><h3>Ten caption designs</h3><p>Real HTML titles over the cut. One word in the scenario redresses the batch.</p></div>
+      <div class="part"><b>15</b><h3>Subtitles, cover, frames</h3><p>An .srt file, a cover and the 16:9 or 1:1 cut, built beside every reel.</p></div>
+      <div class="part"><b>16</b><h3>Two guards</h3><p>One reads your machine before the first build, one reads your text before the voice.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="does">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>What it does</span></h2>
+      <p>Twenty families of technique, 126 tiles, every one a real render. Inside a family the
+        subject stays the same and only the technique changes, so you see a system instead of a
+        pile of filters.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="panel rise">
+        <video preload="none" poster="media/posters/persona.jpg" data-src="media/persona.mp4" autoplay muted loop playsinline
+               aria-label="Ten techniques applied to one character"></video>
+        <div class="cap">
+          <h3 class="panel-title">Break and rebuild</h3>
+          <p>One subject, ten techniques, ten angles. Every tile is a real render, not a mock-up.</p>
+        </div>
+      </div>
+
+      <div class="panel rise">
+        <video preload="none" poster="media/posters/impact.jpg" data-src="media/impact.mp4" autoplay muted loop playsinline
+               aria-label="Eight ways to move the frame on one character"></video>
+        <div class="cap">
+          <h3 class="panel-title">Impact and camera</h3>
+          <p>Punch-in, whip pan, spin, stretch, velocity blur, slit scan, grade, bloom.
+            Eight ways to move the frame, all on the same subject.</p>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/objects.jpg" data-src="media/objects.mp4" autoplay muted loop playsinline
+                 aria-label="Objects in 3D: notes, a deck of clip cards, a card flip, a cube turn"></video>
+          <div class="cap">
+            <h3 class="panel-title">Objects</h3>
+            <p>Notes and clip cards falling through real perspective, lit by the angle of their
+              own surface, focus falling off with distance. Every object is drawn by code.</p>
+          </div>
+        </div>
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/geometry.jpg" data-src="media/geometry.mp4" autoplay muted loop playsinline
+                 aria-label="Geometry: sphere, cube, wave field, torus, helix, tunnel"></video>
+          <div class="cap">
+            <h3 class="panel-title">Geometry</h3>
+            <p>A sphere of 2,200 particles, a cube in wireframe, a wave field, a torus, a helix,
+              a tunnel. Forms that sit under any shot.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/interface.jpg" data-src="media/interface.mp4" autoplay muted loop playsinline
+               aria-label="Interface in motion: timeline, beat cuts, tools, parameters, gates, builds"></video>
+        <div class="cap">
+          <h3 class="panel-title">Interface in motion</h3>
+          <p>The timeline, cuts landing on the beat, the tool a skill picked, parameters the
+            presets drive, gates reporting pass or fix, ten builds filling up. This is the work
+            happening while you wait.</p>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/charts.jpg" data-src="media/charts.mp4" autoplay muted loop playsinline
+                 aria-label="Charts and counters: bars, curve, ring, counter, sparklines, stack"></video>
+          <div class="cap">
+            <h3 class="panel-title">Charts and counters</h3>
+            <p>Bars, a watch-time curve, a ring, a number counting up, sparklines, a stack.
+              Your own run fills in the numbers.</p>
+          </div>
+        </div>
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/type.jpg" data-src="media/type.mp4" autoplay muted loop playsinline
+                 aria-label="Type: text behind the subject, typewriter, word slam, line stack, text mask, ticker"></video>
+          <div class="cap">
+            <h3 class="panel-title">Type</h3>
+            <p>A word drives in behind the subject, text types itself, a line slams, titles stack,
+              the subject shows through the letters, a ticker runs.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel rise">
+          <video preload="none" poster="media/posters/break.jpg" data-src="media/break.mp4" autoplay muted loop playsinline
+                 aria-label="Break and noise: shatter, mosaic, RGB glitch, tape rewind, background dissolve, echo trail"></video>
+          <div class="cap">
+            <h3 class="panel-title">Break and noise</h3>
+            <p>A frame splits into shards, drops to blocks, tears into colour channels, rewinds
+              like tape, dissolves away from its background, and trails behind itself.</p>
+          </div>
+        </div>
+        <div class="panel rise">
+          <video preload="none" poster="media/posters/volume.jpg" data-src="media/volume.mp4" autoplay muted loop playsinline
+                 aria-label="Volume and turns: sphere, sphere mosaic, 3D flip, cube spin, clip cards, falling notes"></video>
+          <div class="cap">
+            <h3 class="panel-title">Volume and turns</h3>
+            <p>The same footage becomes a surface in space: it wraps a sphere, breaks into
+              floating blocks, flips, rides the face of a cube, stacks into cards, and falls
+              through the shot as notes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel rise">
+          <video preload="none" poster="media/posters/face.jpg" data-src="media/face.mp4" autoplay muted loop playsinline
+                 aria-label="Shatter, mosaic, glitch, money, echo and slit scan run on a person"></video>
+          <div class="cap">
+            <h3 class="panel-title">The face inside</h3>
+            <p>Every technique run on a person rather than a still. The subject stays readable
+              while the frame around them is taken apart.</p>
+          </div>
+        </div>
+        <div class="panel rise">
+          <video preload="none" poster="media/posters/control.jpg" data-src="media/control.mp4" autoplay muted loop playsinline
+                 aria-label="A title behind the subject, a word slamming in, and the live control panel"></video>
+          <div class="cap">
+            <h3 class="panel-title">Titles and control</h3>
+            <p>A title sits behind the subject, a word slams into frame, and the panel on the
+              right is the one that drives every number you have just watched move.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/color.jpg" data-src="media/color.mp4" autoplay muted loop playsinline
+               aria-label="Color and film: grade, color held on the subject, bloom, grain, duotone, split wipe"></video>
+        <div class="cap">
+          <h3 class="panel-title">Color and film</h3>
+          <p>A graded look, color held on the subject while the world goes graphite, bloom,
+            film grain with halation, duotone, and a wipe that puts graded and raw side by side.</p>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/blast.jpg" data-src="media/blast.mp4" autoplay muted loop playsinline
+               aria-label="Blast: impact wave, explosion, shards, heat haze, flash cut, debris in 3D"></video>
+        <div class="cap">
+          <h3 class="panel-title">Blast</h3>
+          <p>A shock ring crosses the frame, the shot blows apart and reassembles, the air above
+            it shakes, and the cut lands on a white flash. Six ways to hit a frame hard.</p>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/camera.jpg" data-src="media/camera.mp4" autoplay muted loop playsinline
+                 aria-label="Camera: push in, pan, dolly, orbit, shake, handheld"></video>
+          <div class="cap">
+            <h3 class="panel-title">Camera</h3>
+            <p>Push in, pan, dolly, orbit, a shake that decays, and the uneven drift of a hand.
+              The corner of each tile draws the path the camera is taking.</p>
+          </div>
+        </div>
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/time.jpg" data-src="media/time.mp4" autoplay muted loop playsinline
+                 aria-label="Time: ramp, freeze, reverse, stutter, slow motion, speed up"></video>
+          <div class="cap">
+            <h3 class="panel-title">Time</h3>
+            <p>The same take ramped, frozen, reversed, stuttered three frames at a step, slowed
+              to a quarter and run at four times. The bar under each tile reads the speed.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/masks.jpg" data-src="media/masks.mp4" autoplay muted loop playsinline
+                 aria-label="Masks: cutout, rim, luma key, colour key, shape mask, tracked box"></video>
+          <div class="cap">
+            <h3 class="panel-title">Masks</h3>
+            <p>The subject lifted off the background, outlined, keyed by brightness, keyed by
+              colour, framed by a moving window, and followed by a box that holds the face.</p>
+          </div>
+        </div>
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/speech.jpg" data-src="media/speech.mp4" autoplay muted loop playsinline
+                 aria-label="Speech: karaoke, word pop, caption bar, speech track, pauses, accent"></video>
+          <div class="cap">
+            <h3 class="panel-title">Speech</h3>
+            <p>Words light up on the beat they are spoken, captions sit where they do not fight
+              the face, and the silent parts are found and taken out of the cut.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/sound.jpg" data-src="media/sound.mp4" autoplay muted loop playsinline
+                 aria-label="Sound: waveform, beats, levels, voice choice, music, silence"></video>
+          <div class="cap">
+            <h3 class="panel-title">Sound</h3>
+            <p>The waveform, the beat grid the cuts land on, music ducking under the voice, eight
+              voices to pick from, and every stretch below the floor marked for removal.</p>
+          </div>
+        </div>
+        <div class="panel rise fam">
+          <video preload="none" poster="media/posters/light.jpg" data-src="media/light.mp4" autoplay muted loop playsinline
+                 aria-label="Light: rim light, lens flare, god rays, glow, vignette, shadow"></video>
+          <div class="cap">
+            <h3 class="panel-title">Light</h3>
+            <p>A rim along the shoulder, a flare crossing the lens, rays through the frame, a
+              glow on the highlights, a closing vignette and a shadow thrown on the wall.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/output.jpg" data-src="media/output.mp4" autoplay muted loop playsinline
+               aria-label="Output: vertical, square, wide, cover, export, queue of ten"></video>
+        <div class="cap">
+          <h3 class="panel-title">Output</h3>
+          <p>The same shot framed vertical, square and wide, a cover built from the strongest
+            frame, the export with its real numbers, and ten finished reels leaving the queue.</p>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/transitions.jpg" data-src="media/transitions.mp4" autoplay muted loop playsinline
+               aria-label="Transitions: whip pan, zoom blur, glitch cut, dissolve, cube turn, light leak"></video>
+        <div class="cap">
+          <h3 class="panel-title">Transitions</h3>
+          <p>The only place where one shot meets another: a whip that drags the next frame in,
+            a blur that falls into a point, a cut torn by noise, blocks, a cube, a strip of light.</p>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/depth.jpg" data-src="media/depth.mp4" autoplay muted loop playsinline
+               aria-label="Depth: bokeh, parallax, fog, focus pull, cast shadow, extrude"></video>
+        <div class="cap">
+          <h3 class="panel-title">Depth</h3>
+          <p>The far plane put behind the near one: bokeh, two planes moving at different
+            speeds, haze, focus crossing from the wall to the face, a shadow, a silhouette
+            pushed into the frame.</p>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/frame.jpg" data-src="media/frame.mp4" autoplay muted loop playsinline
+               aria-label="Frame: split, picture in picture, mirror, triptych, matte box, dutch tilt"></video>
+        <div class="cap">
+          <h3 class="panel-title">Frame</h3>
+          <p>One frame divided and repeated: a split of two moments, an inset close-up, a
+            mirror, three strips of one turn, a window that leaves the rest dark, a tilt.</p>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/texture.jpg" data-src="media/texture.mp4" autoplay muted loop playsinline
+               aria-label="Texture: film grain, VHS, dust, paper, glass, halation"></video>
+        <div class="cap">
+          <h3 class="panel-title">Texture</h3>
+          <p>What the picture is made of, not what is in it: emulsion grain, tape, dust and
+            hairs, paper fibre, uneven glass, and light bleeding around the bright parts.</p>
+        </div>
+      </div>
+
+      <div class="panel rise fam">
+        <video preload="none" poster="media/posters/branding.jpg" data-src="media/branding.mp4" autoplay muted loop playsinline
+               aria-label="Branding: lower third, stamp, end titles, watermark, end card, kerning"></video>
+        <div class="cap">
+          <h3 class="panel-title">Branding</h3>
+          <p>The marks a finished reel signs itself with: a lower third, a stamp pressed into
+            the frame, end titles, a watermark that stays out of the way, an end card.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="inside">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>What is inside</span></h2>
+      <p>Effects can be copied. A year of mistakes turned into code cannot. That is the part
+        you are actually buying.</p>
+    </div>
+
+
+    <div class="panel rise" style="margin-bottom:28px">
+      <video preload="none" poster="media/posters/inside.jpg" data-src="media/inside.mp4" autoplay muted loop playsinline
+             aria-label="Ten layers of the system: gates, effects, directives, skills, agents, connections, memory, commands, voice, avatar"></video>
+      <div class="cap">
+        <h3 class="panel-title">Ten layers, working</h3>
+        <p>A gate catching a violation, skills loading themselves for the job, a task handed to
+          an agent, a command unrolling into a chain. Every number here was counted in the
+          repository, not estimated.</p>
+      </div>
+    </div>
+
+    <div class="bento">
+      <div class="cell rise full"><b>17</b><h3>Gates</h3>
+        <p>Code that refuses to let a rule slide. Claim a job is done without numbers and the
+          answer never ships. Work in an area whose rules you have not read and the tool stays
+          locked. A rule written in a document gets ignored. A rule written as a gate does not.</p></div>
+      <div class="cell rise wide"><b>126</b><h3>Effects library</h3>
+        <p>Frame by frame processing in twenty families: real perspective, light by surface
+          normal, blur by speed, depth of field. Physics, not a flat filter.</p></div>
+      <div class="cell rise wide"><b>215</b><h3>Directives</h3>
+        <p>Rules written from real mistakes. Each one says what happened, what is banned now,
+          and how it gets checked.</p></div>
+      <div class="cell rise"><b>178</b><h3>Skills</h3>
+        <p>Abilities that load themselves for the job: editing, type, copy, design, review.</p></div>
+      <div class="cell rise"><b>10</b><h3>Agents in our studio</h3>
+        <p>Roles you hand a slice of work to: review, planning, analytics, visuals, copy.</p></div>
+      <div class="cell rise"><b>10</b><h3>Connections</h3>
+        <p>Outside services wired in as tools: frames, voice, avatars, notes, browser, terminal.</p></div>
+      <div class="cell rise wide"><b>6</b><h3>Recipes</h3>
+        <p>Ready chains you pick by name: Voice At Home, Host On Subscription, Silent Cut.</p></div>
+      <div class="cell rise wide"><b>417</b><h3>Commands and memory</h3>
+        <p>One call unrolls into a chain of thirty-eight steps, and what the session learned lands
+          in notes. Tomorrow does not start from zero.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>How it installs</span></h2>
+      <p>You install three things by hand: Claude Code, Python and ffmpeg. Everything after
+        that the box does for itself — it reads its own rules, pulls the tools it needs,
+        writes the gates and reports what it found. You paste one block at a time and every
+        block ends with a check that prints what should be on screen. About ninety minutes on
+        a clean machine, and an hour of that is downloading.</p>
+
+      <div class="selfsetup">
+        <div><b>You</b><span>Claude Code, Python, ffmpeg. Three downloads, no settings.</span></div>
+        <div><b>The box</b><span>Effects, skills, agents, commands, memory, gates — it sets them up and checks itself after each one.</span></div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step rise"><b>01</b><div><h3>Install Claude Code</h3>
+        <p>Download, install, subscribe. Check: the version prints in your terminal.</p></div></div>
+      <div class="step rise"><b>02</b><div><h3>Create the project folder</h3>
+        <p>The block writes the folder and the rules that load on every run.</p></div></div>
+      <div class="step rise"><b>03</b><div><h3>Install the tools</h3>
+        <p>ffmpeg, node, the environment, the libraries. Check: one command reads the machine
+          and prints six blocks, every missing piece named before the first build.</p></div></div>
+      <div class="step rise"><b>04</b><div><h3>Install the effects</h3>
+        <p>The library and the presets. Check: a test reel builds from your own footage.</p></div></div>
+      <div class="step rise"><b>05</b><div><h3>Install the skills</h3>
+        <p>Editing, copy and design abilities. Check: the installed list prints.</p></div></div>
+      <div class="step rise"><b>06</b><div><h3>Set up the agents</h3>
+        <p>Roles and their rules. Check: the review agent answers a test question.</p></div></div>
+      <div class="step rise"><b>07</b><div><h3>Set up memory</h3>
+        <p>The notes store and its index. Check: the first note exists.</p></div></div>
+      <div class="step rise"><b>08</b><div><h3>Wire the commands</h3>
+        <p>Session review, knowledge dump, context reload.</p></div></div>
+      <div class="step rise"><b>09</b><div><h3>Turn on the gates</h3>
+        <p>An unusual check: break a rule on purpose and watch the tool block you.</p></div></div>
+      <div class="step rise"><b>10</b><div><h3>Pick your path</h3>
+        <p>Local or paid. Check: a test voice speaks on your own machine.</p></div></div>
+      <div class="step rise"><b>11</b><div><h3>Turn on the recipes</h3>
+        <p>Seven ready chains. Check: the chain you picked runs end to end.</p></div></div>
+      <div class="step rise"><b>12</b><div><h3>Your first reel</h3>
+        <p>Drop in a clip, run one command, take the result. On a forty second clip with no
+          speech you get six reels out of ten, and all six pass the gates. The other four are
+          refused with a reason you can check.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="paths">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>Two paths</span></h2>
+      <p>The same workspace runs two ways. You choose by hardware and by budget, and you
+        switch it in a setting.</p>
+    </div>
+
+    <div class="switch" role="tablist" aria-label="Choose a path">
+      <button role="tab" aria-selected="true" data-path="gpu">I have a GPU</button>
+      <button role="tab" aria-selected="false" data-path="api">No GPU</button>
+    </div>
+
+    <table>
+      <caption id="cap-path">Local and free</caption>
+      <thead><tr><th scope="col">Job</th><th scope="col">What runs it</th></tr></thead>
+      <tbody id="paths-body"></tbody>
+    </table>
+
+    <p style="margin-top:24px">Straight answer on hardware: the local path is built for an
+      NVIDIA card. On an Apple silicon Mac some of it runs slowly through MPS and some of it
+      does not run at all. The guide says which is which and what to do instead.</p>
+  </div>
+</section>
+
+<section id="free">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>Two sets, free</span></h2>
+      <p>Not cut down versions of the paid one. Each does one thing and does it fully:
+        drop in your video, run one command, take the file.</p>
+    </div>
+
+    <div class="row2">
+      <div class="panel rise">
+        <div class="ministage">
+          <div class="minicube">
+            <div class="f fr" style="background-image:url(media/free-movik-face.jpg)"></div>
+            <div class="f rt" style="background-image:url(media/free-movik-side.jpg)"></div>
+            <div class="f tp" style="background-image:url(media/free-movik-top.jpg)"></div>
+            <div class="sh" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div style="padding:0 var(--pad-panel)">
+          <h3 class="panel-title">Build your own beat cut</h3>
+          <p>Cuts land on the loud moments, a punch-in and a channel split on every hit,
+            a title at the top. The run below took a thirty four second clip and gave back
+            nineteen seconds, in about four minutes on a laptop.</p>
+        </div>
+        <details class="runbox">
+          <summary>Watch the run</summary>
+          <video preload="none" poster="media/posters/free-movik.jpg" data-src="media/free-movik.mp4"
+                 autoplay muted loop playsinline
+                 aria-label="A beat cut built from our own clip"></video>
+        </details>
+      </div>
+
+      <div class="panel rise">
+        <div class="ministage">
+          <div class="minicube">
+            <div class="f fr" style="background-image:url(media/free-screen-face.jpg)"></div>
+            <div class="f rt" style="background-image:url(media/free-screen-side.jpg)"></div>
+            <div class="f tp" style="background-image:url(media/free-screen-top.jpg)"></div>
+            <div class="sh" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div style="padding:0 var(--pad-panel)">
+          <h3 class="panel-title">Editor screen</h3>
+          <p>The screen this product is promoted with, built from your own clip: six agent
+            cursors working one timeline, a media pool, scopes and meters. Same
+            command, same folder, no editor installed.</p>
+        </div>
+        <details class="runbox">
+          <summary>Watch the run</summary>
+          <video preload="none" poster="media/posters/free-montazh.jpg" data-src="media/free-montazh.mp4"
+                 autoplay muted loop playsinline
+                 aria-label="The editor screen built by the free set"></video>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="price">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title"><span>Price</span></h2>
+      <p>Two free sets work on their own, without payment and without an account.
+        The box is the whole workspace.</p>
+    </div>
+
+    <div class="plans">
+      <div class="plan rise">
+        <span class="meta">Free sets</span>
+        <div class="now">$0</div>
+        <p>Two tools that run on their own and need nothing else.</p>
+        <ul>
+          <li>beat cut: your clip in, one finished vertical reel out</li>
+          <li>editor screen: your video inside a program window, with a breakdown</li>
+          <li>no account, no key, no cap on how often you run them</li>
+        </ul>
+        <a class="btn btn-ghost" href="#free">Take the free sets</a>
+      </div>
+
+      <div class="plan plan-main rise">
+        <span class="meta">Launch price</span>
+        <div class="now">$79 <s>$119</s></div>
+        <p>The whole workspace: sixteen parts in one folder.</p>
+        <ul>
+          <li>the pipeline: four steps, ten types of reel from one clip</li>
+          <li>the storyboard and the scenario path, where you pick the moments yourself</li>
+          <li>ten caption designs, subtitles, covers, 16:9 and 1:1 beside every reel</li>
+          <li>nine checks that measure the finished file, not the plan</li>
+          <li>the effects library and the generators that build all 126 tiles</li>
+          <li>templates: project rules, four Claude Code gates, five agents, three commands, memory</li>
+          <li>seven recipes you pick by name, each one command</li>
+          <li>a sandbox that adds your own technique to the library</li>
+          <li>54 voices that speak on your machine, without a subscription</li>
+          <li>a twelve step guide with a check after every step, plus a chapter on growing the tool</li>
+          <li>both free sets, included</li>
+        </ul>
+        <a class="btn buy" id="launch" data-buy href="#price">Get the box, $79</a>
+        <p class="meta buy-note" style="margin-top:14px">Card checkout, the file arrives the
+          moment the payment clears. Fourteen days to change your mind.</p>
+      </div>
+    </div>
+
+    <div class="promise">
+      <div class="rise"><b>14 days</b><span>Refund without questions. You keep whatever you
+        rendered in the meantime.</span></div>
+      <div class="rise"><b>Offline</b><span>The pipeline needs no account and no key: Python,
+        ffmpeg and Claude Code on your own machine. A key is optional, for the paid voice
+        path only.</span></div>
+      <div class="rise"><b>Nothing borrowed</b><span>No one else's footage. A scan of a real
+        banknote and fifteen tiles with a borrowed frame inside were taken out of this
+        product.</span></div>
+    </div>
+
+    <div class="faq rise">
+      <h3 class="panel-title">Questions</h3>
+
+      <details>
+        <summary>What machine does it need?</summary>
+        <p>Python 3, ffmpeg and Claude Code. That runs on macOS, Linux and Windows alike;
+          everything renders on the processor, so no graphics card is required. One thirty
+          second clip became all ten types in eighteen minutes on a laptop. Our own runs are
+          on macOS, so that is the path we can vouch for line by line.</p>
+      </details>
+
+      <details>
+        <summary>Do I have to pay for anything else?</summary>
+        <p>No. The pipeline, the effects, the titles and the gates run offline, and the voice
+          is 54 local ones, no key. Paid services are for
+          growing the thing, not for starting it: HeyGen for avatars when your machine has no
+          graphics card, ElevenLabs for a cloned voice, Higgsfield for generated footage. The
+          box explains how to wire each one, and the table above lists the free counterpart
+          for every tool.</p>
+      </details>
+
+      <details>
+        <summary>What if my clip has no speech in it?</summary>
+        <p>Six of the ten types build anyway. The four that need speech are refused with the
+          reason printed in the report, so you can see what was missing instead of getting a
+          broken file.</p>
+      </details>
+
+      <details>
+        <summary>Can I put my own face and voice in it?</summary>
+        <p>Yes, within what the box can do. Replace the turning head with your own five
+          second turn and the talking types use it. The voice is one of 54 that speak on your
+          machine; a cloned voice needs a paid service.</p>
+      </details>
+
+      <details>
+        <summary>Is there a presenter avatar that talks?</summary>
+        <p>No, and we would rather say so here than in the folder. The box has a turning head
+          cut to the length of the speech, not a mouth moving to the words. Lip sync needs a
+          paid service, so the box tells you how to wire HeyGen if you want one. Everything
+          else in here runs without an account.</p>
+      </details>
+
+      <details>
+        <summary>Who writes the headlines and the voice lines?</summary>
+        <p>You and Claude Code, from what the storyboard shows. The box carries the rules for
+          it on one page and a linter that reads the scenario before the build: dead
+          headlines, empty praise and a voice line that only retells the plate are refused
+          with the count, so slop does not reach the render.</p>
+      </details>
+
+      <details>
+        <summary>What is not in the box?</summary>
+        <p>Anyone else's footage, and anything that needs a subscription to work at all.
+          There is no cloud account, no licence server and no call home: the folder sits next
+          to your project and runs there.</p>
+      </details>
+
+      <details>
+        <summary>What if it does not fit my work?</summary>
+        <p>Try the two free sets first on your own clips: they run the same pipeline and the
+          same gates, so what comes out of them is what the box does. If it still does not
+          fit, the refund runs for fourteen days and you keep what you rendered.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<div class="buybar" id="buybar">
+  <div class="wrap">
+    <div>
+      <b>$79 <s>$119</s></b>
+      <span class="hideable" style="margin-left:12px">launch price, fourteen day refund</span>
+    </div>
+    <div class="right">
+      <a class="btn btn-ghost hideable" href="#free">Free sets</a>
+      <a class="btn" data-buy href="#price">Get the box</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span class="meta">Reels Factory. A workspace for cutting short video</span>
+    <span class="meta">Every frame on this page came out of the box itself</span>
+  </div>
+</footer>
+
+<script>
+const PATHS = {
+  gpu: {
+    title: "Local and free",
+    rows: [
+      ["Voice over", "Kokoro (Apache), 54 voices, in the box"],
+      ["Titles and subtitles", "our code: HTML over the cut, ten designs"],
+      ["Avatar and lip sync", "LatentSync, EchoMimic, Hallo2, MultiTalk"],
+      ["Word level transcript", "whisperX (BSD-2), faster-whisper (MIT)"],
+      ["Shot detection", "PySceneDetect (BSD-3)"],
+      ["Background removal", "SAM 2 (Apache), rembg (MIT)"],
+      ["Charts and counters", "Manim (MIT)"],
+      ["Editing and effects", "our code"]
+    ]
+  },
+  api: {
+    title: "On subscription",
+    rows: [
+      ["Voice over", "ElevenLabs, for a cloned voice"],
+      ["Titles and subtitles", "our code: the same ten designs, no account"],
+      ["Avatar and lip sync", "HeyGen"],
+      ["Word level transcript", "hosted Whisper"],
+      ["Shot detection", "PySceneDetect, runs on any machine"],
+      ["Background removal", "the system matte on macOS"],
+      ["Charts and counters", "Manim, runs on any machine"],
+      ["Editing and effects", "our code"]
+    ]
+  }
+};
+const tbody = document.getElementById("paths-body");
+const cap = document.getElementById("cap-path");
+function draw(key){
+  const p = PATHS[key];
+  cap.textContent = p.title;
+  tbody.innerHTML = p.rows
+    .map(r => "<tr><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>").join("");
+}
+document.querySelectorAll(".switch button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".switch button")
+      .forEach(x => x.setAttribute("aria-selected", String(x === b)));
+    draw(b.dataset.path);
+  });
+});
+draw("gpu");
+
+const SOFT = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* блик кнопки и подсветка ячейки идут за курсором: pointermove, не прокрутка */
+if (SOFT) {
+  document.querySelectorAll(".btn").forEach(el => {
+    el.addEventListener("pointermove", e => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      el.style.setProperty("--my", (e.clientY - r.top) + "px");
+    });
+  });
+  document.querySelectorAll(".cell").forEach(el => {
+    el.addEventListener("pointermove", e => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--x", (e.clientX - r.left) + "px");
+      el.style.setProperty("--y", (e.clientY - r.top) + "px");
+    });
+  });
+}
+
+/* цифры досчитываются, когда полоса входит в кадр */
+function countUp(el, to){
+  const t0 = performance.now(), dur = 900;
+  function tick(t){
+    const u = Math.min((t - t0) / dur, 1);
+    const e = 1 - Math.pow(1 - u, 3);
+    el.textContent = Math.round(to * e).toLocaleString("en-US");
+    if (u < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const figs = document.querySelectorAll(".fig b");
+if (SOFT && "IntersectionObserver" in window) {
+  const fo = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const n = parseInt(e.target.textContent.replace(/\D/g, ""), 10);
+      if (n) { e.target.textContent = "0"; countUp(e.target, n); }
+      fo.unobserve(e.target);
+    });
+  }, { threshold: .6 });
+  figs.forEach(f => fo.observe(f));
+}
+
+/* blocks rise as they enter the viewport: observer, never a scroll listener */
+const risers = document.querySelectorAll(".rise");
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add("seen"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+  risers.forEach((el, i) => {
+    el.classList.add("d" + (i % 3 + 1));
+    io.observe(el);
+  });
+} else {
+  risers.forEach((el) => el.classList.add("seen"));
+}
+
+/* loops stop for anyone who asked for less motion */
+if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.querySelectorAll("video").forEach(v => {
+    v.removeAttribute("autoplay");
+    v.pause();
+  });
+}
+</script>
+
+<script>
+/* Двадцать пять петель — это 13 МБ. Грузить их все сразу значит отдать
+   телефонному зрителю мегабайты до того, как он что-то увидел. Поэтому
+   источник подставляется, когда панель подъезжает к экрану, и снимается,
+   когда уехала далеко. Постер стоит сразу: кадр виден с первой секунды. */
+/* Коробку поворачивает указатель: по горизонтали сильнее, по вертикали
+   меньше — так предмет читается объёмным и не заваливается. */
+/* Двенадцать частей выходят по очереди: шаг небольшой, иначе сетка
+   превращается в представление вместо списка. */
+(function () {
+  var части = [].slice.call(document.querySelectorAll(".part"));
+  if (!части.length) return;
+  if (!SOFT || !("IntersectionObserver" in window)) {
+    части.forEach(function (ч) { ч.classList.add("seen"); });
+    return;
+  }
+  var н = new IntersectionObserver(function (записи) {
+    записи.forEach(function (з) {
+      if (!з.isIntersecting) return;
+      var i = части.indexOf(з.target);
+      setTimeout(function () { з.target.classList.add("seen"); }, (i % 4) * 70);
+      н.unobserve(з.target);
+    });
+  }, { rootMargin: "0px 0px -8% 0px" });
+  части.forEach(function (ч) {
+    н.observe(ч);
+    ч.addEventListener("pointermove", function (e) {
+      var r = ч.getBoundingClientRect();
+      ч.style.setProperty("--x", (e.clientX - r.left) + "px");
+      ч.style.setProperty("--y", (e.clientY - r.top) + "px");
+    });
+  });
+})();
+
+/* Рендер коробки весит больше всей остальной страницы, поэтому грузится
+   не сразу: в простое после загрузки, либо раньше — как только указатель
+   пришёл на сцену. Наблюдатель видимости здесь не годится: в фоновой
+   вкладке он молчит, и коробка не появляется вовсе. */
+/* Полоса показывается, когда первый экран ушёл, и прячется у блока цены:
+   две кнопки «купить» рядом спорят друг с другом. */
+(function () {
+  var полоса = document.getElementById("buybar"), цена = document.getElementById("price");
+  if (!полоса) return;
+  var ждём = false;
+  function решить() {
+    ждём = false;
+    var ушёл = (window.scrollY || 0) > window.innerHeight * 0.75;
+    var рядом = false;
+    if (цена) {
+      var r = цена.getBoundingClientRect();
+      рядом = r.top < window.innerHeight * 0.9 && r.bottom > 0;
+    }
+    полоса.classList.toggle("on", ушёл && !рядом);
+  }
+  window.addEventListener("scroll", function () {
+    if (ждём) return;
+    ждём = true;
+    requestAnimationFrame(решить);
+  }, { passive: true });
+  решить();
+})();
+
+(function () {
+  var сцена = document.getElementById("stage"), gl = document.getElementById("gl");
+  if (!сцена || !gl) return;
+  var пущено = false;
+  function поднять() {
+    if (пущено) return;
+    пущено = true;
+    import("./vendor/box3d.js?v=3").then(function (м) {
+      if (м.поставить(gl, { сцена: сцена })) сцена.classList.add("gl-on");
+    }).catch(function (е) {
+      // Запасная вёрстка на гранях остаётся на экране, но молчать нельзя:
+      // иначе пустая сцена выглядит как «всё хорошо».
+      console.error("box3d:", е);
+    });
+  }
+  сцена.addEventListener("pointerenter", поднять, { once: true });
+  if (window.requestIdleCallback) {
+    requestIdleCallback(поднять, { timeout: 2500 });
+  } else {
+    setTimeout(поднять, 1200);
+  }
+})();
+
+(function () {
+  var сцена = document.getElementById("stage"), куб = document.getElementById("cube");
+  if (!сцена || !куб || !SOFT) return;
+  var тик = null;
+  function навести(e) {
+    if (тик) return;
+    тик = requestAnimationFrame(function () {
+      тик = null;
+      var r = сцена.getBoundingClientRect();
+      var u = (e.clientX - r.left) / r.width - 0.5;
+      var v = (e.clientY - r.top) / r.height - 0.5;
+      куб.classList.add("live");
+      куб.style.setProperty("--ry", (-27 + u * 46).toFixed(1) + "deg");
+      куб.style.setProperty("--rx", (-9 - v * 20).toFixed(1) + "deg");
+    });
+  }
+  сцена.addEventListener("pointermove", навести);
+  сцена.addEventListener("pointerleave", function () {
+    куб.classList.remove("live");
+    куб.style.removeProperty("--ry");
+    куб.style.removeProperty("--rx");
+  });
+})();
+
+/* Один проход на кадр вместо пяти слушателей: читаем положение страницы,
+   раздаём его как переменные и ничего не меряем внутри цикла — иначе
+   каждая прокрутка вызывает пересчёт вёрстки и страница начинает дёргаться. */
+(function () {
+  if (!SOFT) return;
+  // Доски выдачи (.still) из параллакса исключены: кадр в них не обрезан
+  // рамкой, и сдвиг открыл бы полосу фона сверху или снизу.
+  var панели = [].slice.call(document.querySelectorAll(".panel:not(.still) video"));
+  var аура = document.querySelector(".aura");
+  var ждём = false;
+
+  function кадр() {
+    ждём = false;
+    var h = window.innerHeight;
+    if (аура) {
+      var k = window.scrollY || 0;
+      аура.style.setProperty("--px", (k * 0.012).toFixed(1) + "px");
+      аура.style.setProperty("--py", (k * 0.018).toFixed(1) + "px");
+    }
+    for (var i = 0; i < панели.length; i++) {
+      var r = панели[i].getBoundingClientRect();
+      if (r.bottom < -200 || r.top > h + 200) continue;
+      var u = (r.top + r.height / 2) / h - 0.5;     // -0.5 сверху, +0.5 снизу
+      панели[i].style.setProperty("--par", (-u * 18).toFixed(1) + "px");
+    }
+  }
+  function дёрнуть() {
+    if (ждём) return;
+    ждём = true;
+    requestAnimationFrame(кадр);
+  }
+  window.addEventListener("scroll", дёрнуть, { passive: true });
+  window.addEventListener("resize", дёрнуть);
+  дёрнуть();
+})();
+
+/* Заголовки выезжают из-под маски, когда секция подходит к экрану. */
+(function () {
+  var шапки = [].slice.call(document.querySelectorAll(".sec-title"));
+  if (!шапки.length) return;
+  if (!SOFT || !("IntersectionObserver" in window)) {
+    шапки.forEach(function (ш) { ш.classList.add("seen"); });
+    return;
+  }
+  var н = new IntersectionObserver(function (зз) {
+    зз.forEach(function (з) {
+      if (!з.isIntersecting) return;
+      з.target.classList.add("seen");
+      н.unobserve(з.target);
+    });
+  }, { rootMargin: "0px 0px -12% 0px" });
+  шапки.forEach(function (ш) { н.observe(ш); });
+  // Если наблюдатель молчит (вкладка в фоне), заголовки всё равно должны
+  // быть видны: лучше без выезда, чем пустая страница.
+  setTimeout(function () {
+    шапки.forEach(function (ш) {
+      if (ш.getBoundingClientRect().top < window.innerHeight) ш.classList.add("seen");
+    });
+  }, 1800);
+})();
+
+/* Главная кнопка тянется к курсору: короткий, физичный отклик. */
+(function () {
+  if (!SOFT) return;
+  var кнопки = [].slice.call(document.querySelectorAll(".btn:not(.btn-ghost)"));
+  кнопки.forEach(function (к) {
+    к.classList.add("magnet");
+    к.addEventListener("pointermove", function (e) {
+      var r = к.getBoundingClientRect();
+      к.style.setProperty("--dx", ((e.clientX - r.left - r.width / 2) * 0.16).toFixed(1) + "px");
+      к.style.setProperty("--dy", ((e.clientY - r.top - r.height / 2) * 0.22).toFixed(1) + "px");
+    });
+    к.addEventListener("pointerleave", function () {
+      к.style.setProperty("--dx", "0px");
+      к.style.setProperty("--dy", "0px");
+    });
+  });
+})();
+
+(function () {
+  var видео = [].slice.call(document.querySelectorAll('video[data-src]'));
+  if (!('IntersectionObserver' in window)) {
+    видео.forEach(function (v) { v.src = v.dataset.src; });
+    return;
+  }
+  var наблюдатель = new IntersectionObserver(function (записи) {
+    записи.forEach(function (з) {
+      var v = з.target;
+      if (з.isIntersecting) {
+        if (!v.src) { v.src = v.dataset.src; }
+        var p = v.play(); if (p && p.catch) { p.catch(function () {}); }
+      } else {
+        v.pause();
+      }
+    });
+  }, { rootMargin: '600px 0px' });
+  видео.forEach(function (v) { наблюдатель.observe(v); });
+
+  // Подстраховка: в фоновой вкладке наблюдатель молчит, и петли не
+  // начинаются вовсе. Через пару секунд поднимаем то, что уже в экране.
+  setTimeout(function () {
+    видео.forEach(function (v) {
+      var r = v.getBoundingClientRect();
+      if (!v.src && r.top < window.innerHeight * 1.5 && r.bottom > -200) {
+        v.src = v.dataset.src;
+        var p = v.play(); if (p && p.catch) { p.catch(function () {}); }
+      }
+    });
+  }, 2000);
+})();
+
+/* Адрес оплаты. Пока он пуст, кнопки ведут к блоку цены и говорят, что
+   касса откроется; как только появится ссылка товара, она ставится здесь
+   одной строкой, и все кнопки на странице начинают вести в кассу. */
+var ОПЛАТА = "";
+
+(function () {
+  var кнопки = document.querySelectorAll("[data-buy]");
+  if (!кнопки.length) { return; }
+  var записка = document.querySelector(".buy-note");
+  if (!ОПЛАТА) {
+    if (записка) {
+      записка.textContent = "Checkout opens in a few days. The two free sets below "
+        + "run today, with no payment and no account.";
+    }
+    return;
+  }
+  for (var i = 0; i < кнопки.length; i++) {
+    кнопки[i].setAttribute("href", ОПЛАТА);
+    кнопки[i].setAttribute("rel", "noopener");
+  }
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Reels Factory",
+  "description": "A workspace for Claude Code: one clip in, ten finished vertical reels out. Pipeline, effects library, gates, templates, course and recipes in one folder.",
+  "image": "media/cover.jpg",
+  "category": "Video editing toolkit",
+  "offers": {
+    "@type": "Offer",
+    "price": "79",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/PreOrder",
+    "url": "#price"
+  }
+}
+</script>
+</body>
+</html>
