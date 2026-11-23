@@ -10,14 +10,12 @@
 <meta property="og:type" content="product">
 <meta property="og:title" content="Reels Factory: ten reels from one clip">
 <meta property="og:description" content="A workspace for Claude Code, not a plugin. Ten reel types, 126 effects, ten caption designs, nine checks on every render.">
-<meta property="og:image" content="https://vseaiteam01-cell.github.io/reels-factory/media/cover.jpg">
-<meta property="og:url" content="https://vseaiteam01-cell.github.io/reels-factory/">
-<link rel="canonical" href="https://vseaiteam01-cell.github.io/reels-factory/">
+<meta property="og:image" content="media/cover.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Reels Factory cover: one clip in, ten reels out, with three rendered reels">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://vseaiteam01-cell.github.io/reels-factory/media/cover.jpg">
+<meta name="twitter:image" content="media/cover.jpg">
 <style>
 /* Шрифты лежат рядом: страница должна собираться и открываться без интернета,
    а в день, когда чужая ссылка перестанет отвечать, подписи остаются на месте. */
@@ -218,6 +216,8 @@ td:first-child{color:var(--c-text);font-weight:700}
 /* Кнопка покупки в блоке цены: крупнее обычной, с запиской под ней. */
 .plan .btn.buy{display:inline-block;font-size:17px;padding:15px 26px}
 .buy-note{font-size:14px;line-height:1.6;color:var(--c-muted);text-wrap:pretty}
+.free-get{margin-top:32px;max-width:62ch}
+.free-get .buy-note{margin:14px 0 0}
 
 .promise{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px}
 .promise div{background:var(--c-panel);border-radius:var(--r-card);
@@ -1149,6 +1149,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
                  aria-label="The editor screen built by the free set"></video>
         </details>
       </div>
+    </div>
+
+    <div class="free-get">
+      <a class="btn" href="reels-factory-free.zip" download>Download both sets</a>
+      <p class="meta buy-note">13&nbsp;KB, no payment and no account. They run on ffmpeg and
+        Python&nbsp;3 with numpy, opencv-python and pillow; the README inside checks all of it
+        with one command.</p>
     </div>
   </div>
 </section>
