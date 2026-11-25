@@ -377,7 +377,37 @@ td:first-child{color:var(--c-text);font-weight:700}
 footer{margin-top:var(--gap-sec);padding:32px 0 48px;border-top:1px solid var(--c-hairline)}
 footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
+/* Три действия покупателя (Сэр 25.11): страница показывает, как много внутри,
+   и человек решает, что всё это ему настраивать. Блок и полосы говорят обратное. */
+.three{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.three>li{min-width:0;background:var(--c-panel);border-radius:var(--r-card);
+  box-shadow:0 0 0 1px var(--c-hairline);padding:26px 24px 24px}
+.three .n{display:block;font-family:Anton,Oswald,sans-serif;font-size:64px;line-height:.9;
+  color:var(--c-lime);margin-bottom:16px;font-variant-numeric:tabular-nums}
+.three h3{margin:0 0 6px;font-size:20px;line-height:1.25;font-weight:700;color:var(--c-text)}
+.three p{margin:0;font-size:15px;line-height:1.5}
+.three .phrase{margin-top:12px;padding:12px 14px;border-radius:var(--r-button);
+  background:var(--c-glass);box-shadow:0 0 0 1px var(--c-hairline);
+  color:var(--c-text);font-size:14px;line-height:1.5}
+.agentdoes{margin-top:16px;padding:24px 26px;border-radius:var(--r-card);
+  box-shadow:0 0 0 1px rgba(182,255,60,.38);background:var(--c-panel)}
+.agentdoes h3{margin:0 0 12px;font-family:Anton,Oswald,sans-serif;font-weight:400;
+  font-size:24px;line-height:1.05;text-transform:uppercase;color:var(--c-lime)}
+.agentdoes ul{margin:0;padding-left:20px;color:var(--c-muted);font-size:16px;line-height:1.55}
+.agentdoes li+li{margin-top:6px}
+.agentdoes .meta{margin:14px 0 0}
+.easy{margin-top:var(--gap-sec);border-top:1px solid var(--c-hairline);
+  border-bottom:1px solid var(--c-hairline);padding:44px 0}
+.easy-big{font-family:Anton,Oswald,sans-serif;font-size:44px;line-height:1;
+  letter-spacing:-1px;text-transform:uppercase;color:var(--c-text);
+  margin:0 0 12px;max-width:none;text-wrap:balance}
+.easy-big span{color:var(--c-lime)}
+.easy p:last-child{margin:0}
+.easy a{color:var(--c-lime)}
+.plan .easy-line{color:var(--c-text);font-weight:700}
+
 @media (max-width:1100px){
+  .three{grid-template-columns:1fr}
   .hero .wrap{grid-template-columns:1fr}
   .display{font-size:62px;letter-spacing:-1.8px}
   .bento{grid-template-columns:repeat(4,1fr)}
@@ -398,6 +428,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .panel .cap{position:static;background:none;padding:14px var(--pad-panel) 18px}
   .panel .cap p{max-width:none}
   .display{font-size:42px;letter-spacing:-1.2px}
+  .easy{padding:32px 0}
+  .easy-big{font-size:30px}
+  .three .n{font-size:52px}
   .sec-title{font-size:31px;letter-spacing:-.9px}
   .panel-title{font-size:21px}
   .lead{font-size:19px}
@@ -511,7 +544,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <a href="#box">In the box</a>
       <a href="#does">What it does</a>
       <a href="#inside">What is inside</a>
-      <a href="#install">How it installs</a>
+      <a href="#install">Three steps</a>
       <a href="#paths">Two paths</a>
       <a href="#free">Free</a>
       <a href="#price">Price</a>
@@ -524,8 +557,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div>
       <span class="meta" style="display:block;margin-bottom:14px">Built on footage we made ourselves</span>
       <h1 class="display"><span class="ln"><i>One clip in.</i></span><span class="ln"><i>Ten reels out.</i></span></h1>
-      <p class="lead">A workspace, not a plugin. Effects, rules, agents and commands wired
-        so the edit builds itself.</p>
+      <p class="lead"><b style="color:var(--c-text)">You do three things.</b> Get Claude or Codex,
+        drop in a clip, paste one sentence. The agent does the rest.</p>
       <div class="cta">
         <a class="btn" data-buy href="#price">Get the box, $79</a>
         <a class="btn btn-ghost" href="#free">Start free</a>
@@ -980,6 +1013,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </div>
 </section>
 
+<div class="easy">
+  <div class="wrap">
+    <p class="easy-big">Looks like a lot? <span>You set up none of it.</span></p>
+    <p>Everything above installs and runs itself. On your side: three steps and an
+      &ldquo;Allow&rdquo; click. <a href="#install">See the three steps</a></p>
+  </div>
+</div>
+
 <section id="inside">
   <div class="wrap">
     <div class="sec-head">
@@ -1029,47 +1070,35 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 <section id="install">
   <div class="wrap">
     <div class="sec-head">
-      <h2 class="sec-title"><span>How it installs</span></h2>
-      <p>You install three things by hand: Claude Code, Python and ffmpeg. Everything after
-        that the box does for itself — it reads its own rules, pulls the tools it needs,
-        writes the gates and reports what it found. You paste one block at a time and every
-        block ends with a check that prints what should be on screen. About ninety minutes on
-        a clean machine, and an hour of that is downloading.</p>
-
-      <div class="selfsetup">
-        <div><b>You</b><span>Claude Code, Python, ffmpeg. Three downloads, no settings.</span></div>
-        <div><b>The box</b><span>Effects, skills, agents, commands, memory, gates — it sets them up and checks itself after each one.</span></div>
-      </div>
+      <h2 class="sec-title"><span>You do three things</span></h2>
+      <p>The rest is the agent's job. It installs the tools, sets up the workflow, builds
+        the reels, checks every file and tells you in plain words what came out. You never
+        open a terminal.</p>
     </div>
 
-    <div class="steps">
-      <div class="step rise"><b>01</b><div><h3>Install Claude Code</h3>
-        <p>Download, install, subscribe. Check: the version prints in your terminal.</p></div></div>
-      <div class="step rise"><b>02</b><div><h3>Create the project folder</h3>
-        <p>The block writes the folder and the rules that load on every run.</p></div></div>
-      <div class="step rise"><b>03</b><div><h3>Install the tools</h3>
-        <p>ffmpeg, node, the environment, the libraries. Check: one command reads the machine
-          and prints six blocks, every missing piece named before the first build.</p></div></div>
-      <div class="step rise"><b>04</b><div><h3>Install the effects</h3>
-        <p>The library and the presets. Check: a test reel builds from your own footage.</p></div></div>
-      <div class="step rise"><b>05</b><div><h3>Install the skills</h3>
-        <p>Editing, copy and design abilities. Check: the installed list prints.</p></div></div>
-      <div class="step rise"><b>06</b><div><h3>Set up the agents</h3>
-        <p>Roles and their rules. Check: the review agent answers a test question.</p></div></div>
-      <div class="step rise"><b>07</b><div><h3>Set up memory</h3>
-        <p>The notes store and its index. Check: the first note exists.</p></div></div>
-      <div class="step rise"><b>08</b><div><h3>Wire the commands</h3>
-        <p>Session review, knowledge dump, context reload.</p></div></div>
-      <div class="step rise"><b>09</b><div><h3>Turn on the gates</h3>
-        <p>An unusual check: break a rule on purpose and watch the tool block you.</p></div></div>
-      <div class="step rise"><b>10</b><div><h3>Pick your path</h3>
-        <p>Local or paid. Check: a test voice speaks on your own machine.</p></div></div>
-      <div class="step rise"><b>11</b><div><h3>Turn on the recipes</h3>
-        <p>Seven ready chains. Check: the chain you picked runs end to end.</p></div></div>
-      <div class="step rise"><b>12</b><div><h3>Your first reel</h3>
-        <p>Drop in a clip, run one command, take the result. On a forty second clip with no
-          speech you get six reels out of ten, and all six pass the gates. The other four are
-          refused with a reason you can check.</p></div></div>
+    <ol class="three">
+      <li class="rise"><span class="n">1</span><h3>Get Claude or Codex</h3>
+        <p>Download the app and sign in. Five minutes, nothing to configure.</p></li>
+      <li class="rise d1"><span class="n">2</span><h3>Unzip, drop in a clip</h3>
+        <p>Put any video from your phone into the <b>in</b> folder. Your reels land in
+          <b>out</b>.</p></li>
+      <li class="rise d2"><span class="n">3</span><h3>Paste one sentence</h3>
+        <p>Open the folder in the agent and paste:</p>
+        <div class="phrase">Get Reels Factory ready on this computer, then make my first ten reels from the video in the in folder.</div></li>
+    </ol>
+
+    <div class="agentdoes rise">
+      <h3>Then the agent, on its own</h3>
+      <ul>
+        <li>installs Python, ffmpeg, the voices and the models inside the folder. The first
+          time takes 10 to 30 minutes, once</li>
+        <li>builds ten reels from your clip and runs every one through the checks</li>
+        <li>shows you what it made, says what to try next, and rebuilds any reel you
+          describe in your own words</li>
+      </ul>
+      <p class="meta">The only button you press is &ldquo;Allow&rdquo; when it asks.
+        No administrator password, nothing installed outside the folder except the agent
+        itself.</p>
     </div>
   </div>
 </section>
@@ -1178,7 +1207,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <div class="now">$0</div>
         <p>Two tools that run on their own and need nothing else.</p>
         <ul>
-          <li>beat cut: your clip in, one finished vertical reel out</li>
+          <li>movik: your clip cut by the recipe of our first movik</li>
           <li>editor screen: your video inside a program window, with a breakdown</li>
           <li>no account, no key, no cap on how often you run them</li>
         </ul>
@@ -1188,7 +1217,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
       <div class="plan plan-main rise">
         <span class="meta">Launch price</span>
         <div class="now">$79 <s>$119</s></div>
-        <p>The whole workspace: sixteen parts in one folder.</p>
+        <p>The whole workspace: sixteen parts in one folder.
+          <span class="easy-line">You do three things, the agent sets up the rest.</span></p>
         <ul>
           <li>the pipeline: four steps, ten types of reel from one clip</li>
           <li>the storyboard and the scenario path, where you pick the moments yourself</li>
@@ -1199,7 +1229,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
           <li>seven recipes you pick by name, each one command</li>
           <li>a sandbox that adds your own technique to the library</li>
           <li>54 voices that speak on your machine, without a subscription</li>
-          <li>a twelve step guide with a check after every step, plus a chapter on growing the tool</li>
+          <li>a visual guide: three steps on your side, then the agent takes over, plus a chapter on growing the tool</li>
           <li>both free sets, included</li>
         </ul>
         <a class="btn buy" id="launch" data-buy href="#price">Get the box, $79</a>
@@ -1209,8 +1239,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     </div>
 
     <div class="promise">
-      <div class="rise"><b>Offline</b><span>The pipeline needs no account and no key: Python,
-        ffmpeg and Claude Code on your own machine. A key is optional, for the paid voice
+      <div class="rise"><b>Offline</b><span>The pipeline needs no account and no key: it runs
+        on your own machine, set up by Claude or Codex. A key is optional, for the paid voice
         path only.</span></div>
       <div class="rise"><b>Nothing borrowed</b><span>No one else's footage. A scan of a real
         banknote and fifteen tiles with a borrowed frame inside were taken out of this
