@@ -273,6 +273,8 @@ td:first-child{color:var(--c-text);font-weight:700}
 .runbox summary::-webkit-details-marker{display:none}
 .runbox video{margin-top:10px;border-radius:var(--r-card);aspect-ratio:9/16;
   max-height:420px;width:auto}
+/* Экран монтажки горизонтальный, 1440 на 900: вертикальная пропорция резала его на телефоне */
+.runbox video.wide{aspect-ratio:16/10;width:100%;max-height:none;height:auto}
 .selfsetup{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;margin:0 0 28px}
 .selfsetup>div{background:var(--c-panel);border-radius:var(--r-card);
   box-shadow:0 0 0 1px var(--c-hairline);padding:20px 22px}
@@ -1147,7 +1149,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         </div>
         <details class="runbox">
           <summary>Watch the run</summary>
-          <video preload="none" poster="media/posters/free-montazh.jpg" data-src="media/free-montazh.mp4"
+          <video class="wide" preload="none" poster="media/posters/free-montazh.jpg" data-src="media/free-montazh.mp4"
                  autoplay muted loop playsinline
                  aria-label="The editor screen built by the free set"></video>
         </details>
